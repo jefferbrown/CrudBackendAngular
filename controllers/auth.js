@@ -1,11 +1,11 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { generarJWT } = require("../helpers/generateJwt");
 
-const Login = (req, res) => {
+const login = (req, res) => {
   const { email, password } = req.body;
   console.log(email + password);
-  User.findOne({ email }, (err, userExist) => {
+  User.findOne({ email }, async (err, userExist) => {
     if (err) {
       console.log(err);
     } else if (!userExist) {
@@ -22,12 +22,8 @@ const Login = (req, res) => {
           msg: "Contraseña no válida",
         });
       } else {
-        const payload = {
-          id: userExist._id,
-        };
-        let token = jwt.sign(payload, process.env.JWT_SECRET, {
-          expiresIn: "12h",
-        });
+        // Generar el TOKEN - JWT
+        const token = await generarJWT(userExist._id);
 
         res.json({
           ok: true,
@@ -39,6 +35,23 @@ const Login = (req, res) => {
   });
 };
 
+const renewToken = async (req, res) => {
+  const uid = req.userId;
+
+  // Generar el TOKEN - JWT
+  const token = await generarJWT(uid);
+
+  // Obtener el usuario por UID
+  const usuario = await User.findById(uid);
+
+  res.json({
+    ok: true,
+    token,
+    usuario,
+  });
+};
+
 module.exports = {
-  Login,
+  login,
+  renewToken,
 };

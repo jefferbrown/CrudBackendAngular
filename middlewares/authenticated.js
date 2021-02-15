@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const authHeader = (req, res, next) => {
   const token = req.headers.authorization;
-
+ 
   if (!token) {
     return res.status(401).json({
       ok: false,
@@ -11,14 +11,15 @@ const authHeader = (req, res, next) => {
   }
 
   try {
-    const id = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = id;
-
+    const { uid } = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = uid;
+	 
     next();
   } catch (error) {
+console.log(error)
     return res.status(401).json({
       ok: false,
-      msg: "Token no válido",
+      msg: "Token no válido o ha expirado",
     });
   }
 };

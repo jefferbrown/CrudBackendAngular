@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validar-campos");
+const { authHeader } = require("../middlewares/authenticated");
 
 const {
   GetUsers,
@@ -9,7 +10,6 @@ const {
   UpdateUser,
   DeleteUser,
 } = require("../controllers/users");
-const { authHeader } = require("../middlewares/authenticated");
 
 /* GET users listing. */
 router.get("/", [authHeader], GetUsers);
@@ -32,7 +32,7 @@ router.post(
   ],
   NewUser
 );
-router.put("/:id", UpdateUser);
-router.delete("/:id", DeleteUser);
+router.put("/:id", [authHeader], UpdateUser);
+router.delete("/:id", [authHeader], DeleteUser);
 
 module.exports = router;

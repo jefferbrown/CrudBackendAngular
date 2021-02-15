@@ -2,7 +2,8 @@ var express = require("express");
 var router = express.Router();
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validar-campos");
-const { Login } = require("../controllers/auth");
+const { login, renewToken } = require("../controllers/auth");
+const { authHeader } = require("../middlewares/authenticated");
 
 router.post(
   "/login",
@@ -11,7 +12,7 @@ router.post(
     check("password", "El password es obligatorio").not().isEmpty(),
     validarCampos,
   ],
-  Login
+  login
 );
-
+router.get("/renew", [authHeader], renewToken);
 module.exports = router;
