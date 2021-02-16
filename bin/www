@@ -4,7 +4,7 @@
  */
 
 require("dotenv").config();
-var debug = require("debug")("movie-backend:server");
+var debug = require("debug")("crud-backend:server");
 var http = require("http");
 const mongoose = require("mongoose");
 
